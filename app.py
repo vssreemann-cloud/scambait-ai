@@ -9,6 +9,229 @@ import anthropic
 load_dotenv()
 st.set_page_config(page_title="ScamBait AI", page_icon="🎣", layout="wide")
 
+def inject_custom_css():
+    st.markdown(
+        """
+        <style>
+        :root {
+            --bg: #07111f;
+            --bg-2: #0d1b2a;
+            --panel: rgba(15, 23, 42, 0.82);
+            --panel-strong: rgba(15, 23, 42, 0.96);
+            --border: rgba(148, 163, 184, 0.18);
+            --text: #e2e8f0;
+            --muted: #9aa9be;
+            --green: #4ade80;
+            --cyan: #38bdf8;
+            --amber: #fbbf24;
+            --red: #f87171;
+            --violet: #a78bfa;
+            --shadow: 0 20px 50px rgba(2, 6, 23, 0.45);
+        }
+
+        html, body, [data-testid="stAppViewContainer"] {
+            background:
+                radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 30%),
+                radial-gradient(circle at top right, rgba(167, 139, 250, 0.15), transparent 28%),
+                linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+            color: var(--text);
+        }
+
+        .main .block-container {
+            padding-top: 1.5rem;
+            padding-bottom: 4rem;
+            max-width: 1500px;
+        }
+
+        [data-testid="stSidebar"] {
+            background: rgba(7, 17, 31, 0.9);
+            border-right: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        [data-testid="stSidebar"] .block-container {
+            padding-top: 1.2rem;
+        }
+
+        .stSelectbox > div > div {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+        }
+
+        .stTextInput > div > div, .stTextArea > div > div {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .stTabs [role="tablist"] {
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .stTabs [role="tab"] {
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0 1rem;
+        }
+
+        .stTabs [role="tab"][aria-selected="true"] {
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.18), rgba(167, 139, 250, 0.18));
+            border-color: rgba(56, 189, 248, 0.4);
+            color: var(--text);
+            box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.2);
+        }
+
+        div[data-testid="stMetric"] {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.72));
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 1rem 1.1rem;
+            box-shadow: var(--shadow);
+        }
+
+        div[data-testid="stMetric"] label {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        div[data-testid="stMetric"] > div {
+            background: transparent;
+        }
+
+        div[data-testid="stMetric"] > div > div > div {
+            color: var(--text);
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        [data-testid="stChatMessage"] {
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 0.9rem 1rem;
+            margin: 0.5rem 0 0.8rem 0;
+            box-shadow: 0 10px 25px rgba(2, 6, 23, 0.18);
+        }
+
+        [data-testid="stChatMessage"] p {
+            margin-bottom: 0.2rem;
+            color: var(--text);
+        }
+
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            border-radius: 20px;
+        }
+
+        .app-hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem 1.3rem 1rem 1.3rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.7));
+            box-shadow: var(--shadow);
+        }
+
+        .section-label {
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.08rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--cyan);
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 999px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            color: var(--green);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .status-pill::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.9);
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--text);
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+        }
+
+        .caption-soft {
+            color: var(--muted);
+            font-size: 0.92rem;
+            margin-top: 0.25rem;
+        }
+
+        .stDownloadButton > button, .stButton > button {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(167, 139, 250, 0.2));
+            border: 1px solid rgba(56, 189, 248, 0.28);
+            color: var(--text);
+            font-weight: 700;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.12);
+        }
+
+        .stDownloadButton > button:hover, .stButton > button:hover {
+            transform: translateY(-1px);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        .dataframe {
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .stDataFrame {
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .stToast {
+            background: rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--text);
+        }
+
+        @media (max-width: 900px) {
+            .app-hero {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
 # 2. Database Helper Functions
 def init_db():
     conn = sqlite3.connect("blocklist.db")
@@ -39,6 +262,9 @@ def get_blocklist():
 # Initialize Database
 init_db()
 
+# Apply custom styling
+inject_custom_css()
+
 # 3. Threat Intelligence Extraction Function
 def extract_threat_intel(text):
     upi_pattern = r'[a-zA-Z0-9.\-_]+@[a-zA-Z]+'
@@ -65,6 +291,7 @@ def extract_threat_intel(text):
 
 # 4. Sidebar - Dynamic Persona Selector
 st.sidebar.title("🎭 Persona Settings")
+st.sidebar.caption("Choose how the AI should behave while wasting the scammer’s time.")
 persona_choice = st.sidebar.selectbox(
     "Select AI Bait Persona:",
     ["Confused Senior Citizen (Uncle Ramesh)", "Naïve Student (Priya)", "Busy Corporate Employee"]
@@ -78,9 +305,26 @@ PROMPTS = {
 
 SYSTEM_PROMPT = PROMPTS[persona_choice] + "\nGOAL: Waste the scammer's time. NEVER share real financial details or credentials."
 
+st.sidebar.markdown("---")
+st.sidebar.caption("Operational notes")
+st.sidebar.write("• Auto-extracts UPI, phones, IFSC, URLs")
+st.sidebar.write("• Saves intel to shared database")
+st.sidebar.write("• Keeps persona consistent across turns")
+
 # 5. Dashboard Metrics Header
-st.title("🎣 ScamBait: AI Scammer Time-Waster")
-st.caption("Active offense tool that strings scammers along and extracts operational data.")
+st.markdown(
+    """
+    <div class="app-hero">
+        <div>
+            <div class="section-label">AI Operations Console</div>
+            <h1>🎣 ScamBait: AI Scammer Time-Waster</h1>
+            <div class="caption-soft">Active offense tool that strings scammers along and extracts operational data.</div>
+        </div>
+        <div class="status-pill">Live • Intel capture active</div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 col1, col2, col3 = st.columns(3)
 turns_count = len(st.session_state.get("messages", [])) // 2
